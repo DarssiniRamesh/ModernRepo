@@ -10,6 +10,12 @@ Check out the complete tutorial on the CalliCoder blog -
 
 **1. Clone the repository**
 
+If your environment requires it, make the wrapper script executable:
+
+```bash
+chmod +x mvnw
+```
+
 ```bash
 git clone https://github.com/callicoder/spring-boot-postgresql-jpa-hibernate-rest-api-demo.git
 ```
@@ -20,15 +26,15 @@ First, create a database named `postgres_demo`. Then, open `src/main/resources/a
 
 **3. Run the app**
 
-Type the following command from the root directory of the project to run it -
+This project includes the Maven Wrapper, so you don't need a global Maven installation. From the project root, run:
 
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
-Alternatively, you can package the application in the form of a JAR file and then run it like so -
+Alternatively, you can package the application as a JAR and then run it:
 
 ```bash
-mvn clean package
+./mvnw clean package
 java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar
 ```
