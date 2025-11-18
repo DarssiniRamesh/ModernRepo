@@ -20,15 +20,21 @@ First, create a database named `postgres_demo`. Then, open `src/main/resources/a
 
 **3. Run the app**
 
-Type the following command from the root directory of the project to run it -
+Use the Maven Wrapper so you don't need a globally installed Maven. From the project root:
 
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
+```
+
+To run on a specific port (e.g., 3001) without changing configuration:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--server.port=3001"
 ```
 
 Alternatively, you can package the application in the form of a JAR file and then run it like so -
 
 ```bash
-mvn clean package
-java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar
+./mvnw clean package
+java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar --server.port=3001
 ```
