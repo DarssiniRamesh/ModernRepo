@@ -2,13 +2,15 @@
 
 FROM postgres:13-alpine
 
-# Set environment variables for default DB setup
+# PUBLIC_INTERFACE
+# Set environment variables for configuring the PostgreSQL database,
+# taken from docker-compose.yml or overridden at runtime if needed.
 ENV POSTGRES_DB=postgres_demo
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=postgres
 
+# Expose the PostgreSQL service on port 3002 for container linkage
 EXPOSE 3002
 
-# Change default Postgres port from 5432 to 3002 for the container
-# Use envsubst to replace the port in postgresql.conf after container starts
+# Run PostgreSQL on port 3002 instead of default 5432.
 CMD ["postgres", "-p", "3002"]
