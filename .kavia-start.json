@@ -1,3 +1,7 @@
 {
-  "start": "./start.sh"
+  "start": "./start.sh",
+  "workingDirectory": ".",
+  "env": {
+    "SPRING_PROFILES_ACTIVE": "dev"
+  }
 }

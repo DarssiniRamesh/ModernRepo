@@ -1,5 +1,11 @@
 #!/bin/sh
 # Entrypoint script for ModernRepo repo root.
+
+# Ensure this script is executable in case permissions were lost (e.g., after a git checkout)
+if [ ! -x "$0" ]; then
+  chmod +x "$0"
+fi
+
 # Ensures launch from Modern-Backend, prefers dev profile, and
 # selects between ./mvnw, mvn, or built jar, in that order, with proper fallback.
 # Sets server.port=3001 for preview environments.
@@ -14,7 +20,9 @@ fi
 
 # Ensure Modern-Backend/start.sh gets executable as well, if present.
 if [ -f "$(dirname "$0")/Modern-Backend/start.sh" ]; then
-  chmod +x "$(dirname "$0")/Modern-Backend/start.sh" 2>/dev/null || true
+  if [ ! -x "$(dirname "$0")/Modern-Backend/start.sh" ]; then
+    chmod +x "$(dirname "$0")/Modern-Backend/start.sh" 2>/dev/null || true
+  fi
 fi
 
 # Set Spring profile to dev unless already set.
