@@ -111,11 +111,37 @@ To verify the configuration is working:
 
 Key configuration files for preview URL support:
 
-1. **application.properties**: Base configuration with forwarded headers strategy
+1. **application.properties**: Base configuration with forwarded headers strategy and Springdoc settings
 2. **application-dev.properties**: Development profile (uses forwarded headers)
 3. **application-prod.properties**: Production profile (uses forwarded headers)
-4. **OpenApiConfig.java**: Dynamic server URL resolution logic
-5. **CorsConfig.java**: Permissive CORS for preview environments
+4. **OpenApiConfig.java**: Base OpenAPI configuration with metadata
+5. **OpenApiServerCustomizer.java**: Runtime server URL resolution from X-Forwarded headers
+6. **CorsConfig.java**: Permissive CORS for preview environments
+
+### Key Implementation: OpenApiServerCustomizer
+
+The `OpenApiServerCustomizer` class is the core component that ensures Swagger UI uses the external preview URL:
+
+```java
+@Component
+public class OpenApiServerCustomizer implements OpenApiCustomiser {
+    @Override
+    public void customise(OpenAPI openApi) {
+        String serverUrl = deriveServerUrlFromForwardedHeaders();
+        if (serverUrl != null) {
+            Server server = new Server();
+            server.setUrl(serverUrl);
+            openApi.setServers(Collections.singletonList(server));
+        }
+    }
+}
+```
+
+This component:
+- Runs automatically for every OpenAPI document request
+- Reads X-Forwarded-Proto, X-Forwarded-Host, and X-Forwarded-Port from the current request
+- Constructs the external URL (e.g., `https://vscode-internal-32563-beta.beta01.cloud.kavia.ai:3001`)
+- Sets it as the OpenAPI server URL so Swagger UI uses it for "Try it out" calls
 
 ## Environment Variables
 

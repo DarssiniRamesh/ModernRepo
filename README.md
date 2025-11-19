@@ -151,9 +151,11 @@ Once the application is running, access the interactive Swagger UI documentation
 http://localhost:3001/swagger-ui.html
 ```
 
+**Preview Environment:** When accessed through a preview URL (e.g., `https://vscode-internal-32563-beta.beta01.cloud.kavia.ai:3001/swagger-ui.html`), Swagger UI automatically detects and uses the external URL for all "Try it out" requests. No configuration needed!
+
 The Swagger UI provides:
 - Complete API documentation with examples
-- Interactive "Try it out" functionality to test endpoints
+- Interactive "Try it out" functionality to test endpoints (works with preview URLs)
 - Request/response schemas and validation rules
 - OpenAPI 3.0 specification at: `http://localhost:3001/v3/api-docs`
 
@@ -218,8 +220,15 @@ These settings ensure Swagger UI works correctly even when accessed through a re
 When running in a preview/proxy environment (e.g., `https://vscode-internal-32563-beta.beta01.cloud.kavia.ai:3001`), the application automatically:
 
 1. **Detects external URL** from `X-Forwarded-Proto`, `X-Forwarded-Host`, and `X-Forwarded-Port` headers
-2. **Configures OpenAPI server URL** dynamically to match the external URL
+2. **Configures OpenAPI server URL** dynamically to match the external URL via `OpenApiServerCustomizer`
 3. **Enables Swagger UI "Try it out"** to work with the correct base URL (not localhost)
+4. **Updates server URL for every request** - the customizer runs at request time, ensuring accurate URL resolution
+
+**How it works:**
+- The `OpenApiServerCustomizer` component intercepts OpenAPI document generation
+- For each request to `/v3/api-docs` or `/swagger-config`, it reads X-Forwarded headers
+- It constructs the external URL (e.g., `https://vscode-internal-32563-beta.beta01.cloud.kavia.ai:3001`)
+- Swagger UI receives this URL and uses it for all "Try it out" requests
 
 For detailed information about preview URL configuration, see [Modern-Backend/PREVIEW_URL_CONFIGURATION.md](Modern-Backend/PREVIEW_URL_CONFIGURATION.md)
 
