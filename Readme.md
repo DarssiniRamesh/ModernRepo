@@ -18,6 +18,15 @@ git clone https://github.com/callicoder/spring-boot-postgresql-jpa-hibernate-res
 
 First, create a database named `postgres_demo`. Then, open `src/main/resources/application.properties` file and change the spring datasource username and password as per your PostgreSQL installation.
 
+If running in Docker, the included `docker-compose.yml` in `ModernRepo/DB` will launch a minimal Postgres DB (port 3002). Use these connection settings for backend:
+
+- Host: `localhost`
+- Port: `3002`
+- DB Name: `postgres_demo`
+- Username: `postgres`
+- Password: `postgres`
+- JDBC URL: `jdbc:postgresql://localhost:3002/postgres_demo`
+
 **3. Run the app**
 
 Type the following command from the root directory of the project to run it -
