@@ -16,18 +16,19 @@ git clone https://github.com/callicoder/spring-boot-postgresql-jpa-hibernate-res
 
 **2. Configure PostgreSQL**
 
-The application is set up to connect to a PostgreSQL container running on `localhost` port `3020`, which matches the `postgres-db` container. By default, it uses these environment variables and safe defaults (see `.env.example`):
+The application connects to a local `postgres-db` container running on `localhost:3020` by default. SSL is explicitly disabled for local development with `sslmode=disable` to avoid Postgres startup issues. Production deployments should use `sslmode=verify-full` with proper CA certs. Environment variables (see `.env.example`) control all connection details:
 
 ```
-DB_HOST=localhost
-DB_PORT=3020
-DB_NAME=modernrepo
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_URL=
+SPRING_DATASOURCE_HOST=localhost
+SPRING_DATASOURCE_PORT=3020
+SPRING_DATASOURCE_DB=modernrepo
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=postgres
+SPRING_DATASOURCE_SSLMODE=disable    # For production, use 'verify-full' and configure CA certs
+DB_URL=                              # Optionally override full JDBC URL with your own sslmode etc.
 ```
 
-You can set these variables in your environment or a shell profile. If you wish to override the database host, port, or credentials, set them appropriately. The container listens on port 3020.
+You can set these in your shell profile or as env vars. By default, the database listens on port 3020 and SSL must be off for local containers; for production enable SSL as appropriate.
 
 **3. Run the app**
 
