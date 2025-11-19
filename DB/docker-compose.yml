@@ -18,12 +18,13 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   adminer:
-    image: adminer
+    image: adminer:latest
     container_name: modernrepo_adminer
+    restart: always
     environment:
       ADMINER_DEFAULT_SERVER: db
     ports:
-      - "8080:8080"
+      - "${ADMINER_PORT:-8080}:8080"
     depends_on:
       - db
 
