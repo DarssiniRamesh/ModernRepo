@@ -139,7 +139,21 @@ The application exposes RESTful APIs for managing questions and answers:
 - **Questions:** Create, read, update, delete questions
 - **Answers:** Manage answers for each question
 
-For detailed API documentation, see [Modern-Backend/Readme.md](Modern-Backend/Readme.md)
+### 📚 Swagger UI (Interactive Documentation)
+
+Once the application is running, access the interactive Swagger UI documentation:
+
+```
+http://localhost:3001/swagger-ui.html
+```
+
+The Swagger UI provides:
+- Complete API documentation with examples
+- Interactive "Try it out" functionality to test endpoints
+- Request/response schemas and validation rules
+- OpenAPI 3.0 specification at: `http://localhost:3001/v3/api-docs`
+
+For more details, see [Modern-Backend/Readme.md](Modern-Backend/Readme.md)
 
 ## Troubleshooting
 

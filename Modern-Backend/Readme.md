@@ -138,6 +138,29 @@ export SPRING_PROFILES_ACTIVE=prod
 
 Once the application is running, you can access the following REST endpoints:
 
+### Swagger UI Documentation
+
+**🎉 Interactive API Documentation is now available!**
+
+Access the Swagger UI to explore and test all API endpoints:
+
+```
+http://localhost:3001/swagger-ui.html
+```
+
+Or view the raw OpenAPI specification (JSON format):
+
+```
+http://localhost:3001/v3/api-docs
+```
+
+**Swagger UI Features:**
+- 📖 Complete API documentation with descriptions
+- 🧪 Test endpoints directly from the browser ("Try it out" button)
+- 📋 View request/response schemas and examples
+- ✅ See all validation requirements
+- 🏷️ Endpoints organized by tags (Questions, Answers)
+
 ### Questions API
 - `GET /questions` - Get all questions (with pagination)
 - `POST /questions` - Create a new question
@@ -149,6 +172,17 @@ Once the application is running, you can access the following REST endpoints:
 - `POST /questions/{questionId}/answers` - Add an answer to a question
 - `PUT /questions/{questionId}/answers/{answerId}` - Update an answer
 - `DELETE /questions/{questionId}/answers/{answerId}` - Delete an answer
+
+### Example API Usage
+
+**Create a question using curl:**
+```bash
+curl -X POST http://localhost:3001/questions \
+  -H "Content-Type: application/json" \
+  -d '{"title":"What is Spring Boot?","description":"I want to learn about Spring Boot framework"}'
+```
+
+**Or use the Swagger UI for a more interactive experience!**
 
 ---
 
