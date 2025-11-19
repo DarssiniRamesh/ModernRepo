@@ -1,0 +1,9 @@
+{
+  "name": "modernrepo-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Runner/package.json for ModernRepo root; routes start to ./start.sh",
+  "scripts": {
+    "start": "./start.sh"
+  }
+}
