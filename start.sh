@@ -13,9 +13,24 @@ if [ -f "$(dirname "$0")/Modern-Backend/start.sh" ]; then
   fi
 fi
 
-# Set Spring profile to dev unless already set.
+# Load environment variables from .env file if it exists
+ENV_FILE="$(dirname "$0")/.env"
+if [ -f "$ENV_FILE" ]; then
+  # Export variables from .env (POSIX-compliant approach)
+  while IFS='=' read -r key value; do
+    # Skip comments and empty lines
+    case "$key" in
+      ''|\#*) continue ;;
+    esac
+    # Remove quotes from value if present
+    value=$(echo "$value" | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
+    export "$key=$value"
+  done < "$ENV_FILE"
+fi
+
+# Set Spring profile to prod unless already set (prefer prod for deployment)
 if [ -z "$SPRING_PROFILES_ACTIVE" ]; then
-  SPRING_PROFILES_ACTIVE=dev
+  SPRING_PROFILES_ACTIVE=prod
   export SPRING_PROFILES_ACTIVE
 fi
 
