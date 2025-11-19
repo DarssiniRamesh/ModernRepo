@@ -209,8 +209,21 @@ The application is configured to work correctly behind proxies and in preview en
 - **Remote IP Header:** x-forwarded-for
 - **Protocol Header:** x-forwarded-proto
 - **Swagger UI:** Uses relative URLs to avoid scheme/host mismatches
+- **Dynamic Server URL Resolution:** Automatically detects external URL from forwarded headers
 
 These settings ensure Swagger UI works correctly even when accessed through a reverse proxy or preview URL.
+
+#### Preview Base URL Configuration
+
+When running in a preview/proxy environment (e.g., `https://vscode-internal-32563-beta.beta01.cloud.kavia.ai:3001`), the application automatically:
+
+1. **Detects external URL** from `X-Forwarded-Proto`, `X-Forwarded-Host`, and `X-Forwarded-Port` headers
+2. **Configures OpenAPI server URL** dynamically to match the external URL
+3. **Enables Swagger UI "Try it out"** to work with the correct base URL (not localhost)
+
+For detailed information about preview URL configuration, see [Modern-Backend/PREVIEW_URL_CONFIGURATION.md](Modern-Backend/PREVIEW_URL_CONFIGURATION.md)
+
+**No configuration changes needed** - the application automatically adapts to the environment based on HTTP headers.
 
 ### Testing CORS
 
