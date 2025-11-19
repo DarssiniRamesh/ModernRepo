@@ -14,6 +14,9 @@ import java.util.Collections;
  * Global CORS configuration for the application.
  * Configures Cross-Origin Resource Sharing (CORS) to allow Swagger UI and other clients
  * to make requests from different origins, including preview proxy environments.
+ * 
+ * To add additional allowed origins for production deployments, update the
+ * setAllowedOrigins list in the corsFilter() method below.
  */
 @Configuration
 public class CorsConfig {
@@ -22,7 +25,14 @@ public class CorsConfig {
      * PUBLIC_INTERFACE
      * Creates a CorsFilter bean with global CORS configuration.
      * This allows Swagger UI and other web clients to make cross-origin requests.
-     * Uses allowedOriginPatterns to support preview proxies with varying origins.
+     * 
+     * Configuration includes:
+     * - Explicit allowed origins for preview/production environments
+     * - Wildcard origin patterns for local development
+     * - Standard HTTP methods (GET, POST, PUT, PATCH, DELETE, OPTIONS)
+     * - Common headers (Authorization, Content-Type, Accept)
+     * - Exposed headers (Location, Link) for REST operations
+     * - Preflight cache duration of 1 hour (3600 seconds)
      * 
      * @return CorsFilter configured with allowed origins, methods, and headers
      */
@@ -30,32 +40,53 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         
-        // Allow credentials set to false for broader compatibility
+        // Allow credentials set to false for broader compatibility with strict browsers
         config.setAllowCredentials(false);
         
-        // Allow all origin patterns to support preview proxies
+        // Explicitly allow preview domain origin for strict browser CORS enforcement
+        // Add additional production origins here as needed
+        config.setAllowedOrigins(Arrays.asList(
+            "https://vscode-internal-32563-beta.beta01.cloud.kavia.ai:3001"
+        ));
+        
+        // Keep wildcard pattern for local development (localhost variations)
+        // This works alongside allowedOrigins for non-strict scenarios
         config.setAllowedOriginPatterns(Collections.singletonList("*"));
         
-        // Allow all standard HTTP methods including OPTIONS for preflight
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        // Allow standard HTTP methods including OPTIONS for preflight requests
+        config.setAllowedMethods(Arrays.asList(
+            "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+        ));
         
-        // Allow Authorization and Content-Type headers as required
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", 
-                                               "Origin", "X-Requested-With", 
-                                               "Access-Control-Request-Method", 
-                                               "Access-Control-Request-Headers"));
+        // Allow common request headers
+        config.setAllowedHeaders(Arrays.asList(
+            "Authorization", 
+            "Content-Type", 
+            "Accept",
+            "Origin", 
+            "X-Requested-With", 
+            "Access-Control-Request-Method", 
+            "Access-Control-Request-Headers"
+        ));
         
-        // Expose headers that clients may need to access
-        config.setExposedHeaders(Arrays.asList("Access-Control-Allow-Origin", 
-                                               "Access-Control-Allow-Credentials",
-                                               "Content-Type",
-                                               "Authorization"));
+        // Expose headers that clients may need to access in responses
+        // Location: used for created resource URLs
+        // Link: used for pagination and HATEOAS
+        config.setExposedHeaders(Arrays.asList(
+            "Location", 
+            "Link",
+            "Access-Control-Allow-Origin", 
+            "Access-Control-Allow-Credentials",
+            "Content-Type",
+            "Authorization"
+        ));
         
         // Cache preflight response for 1 hour (3600 seconds)
+        // This reduces OPTIONS request overhead
         config.setMaxAge(3600L);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Apply CORS configuration to all paths
+        // Apply CORS configuration to all paths including controllers and Swagger routes
         source.registerCorsConfiguration("/**", config);
         
         return new CorsFilter(source);

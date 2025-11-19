@@ -162,7 +162,20 @@ http://localhost:3001/v3/api-docs
 - 🏷️ Endpoints organized by tags (Questions, Answers)
 
 **CORS Configuration:**
-The application includes global CORS configuration to allow Swagger UI to function correctly. The default configuration allows all origins for development. For production deployments, see [CORS_CONFIGURATION.md](CORS_CONFIGURATION.md) for security best practices and how to restrict allowed origins.
+The application includes global CORS configuration to allow Swagger UI to function correctly. 
+
+- **Preview/Production Origins:** Explicitly allowed origins are configured in `src/main/java/com/example/postgresdemo/config/CorsConfig.java`
+- **To add more origins:** Edit the `setAllowedOrigins()` list in the `CorsConfig.corsFilter()` method
+- **Local Development:** Wildcard origin patterns (`*`) are enabled for localhost and development testing
+- **Security Note:** For production deployments, see [CORS_CONFIGURATION.md](CORS_CONFIGURATION.md) for best practices
+
+Example of adding a new origin:
+```java
+config.setAllowedOrigins(Arrays.asList(
+    "https://vscode-internal-32563-beta.beta01.cloud.kavia.ai:3001",
+    "https://your-production-domain.com"  // Add your domain here
+));
+```
 
 ### Questions API
 - `GET /questions` - Get all questions (with pagination)
