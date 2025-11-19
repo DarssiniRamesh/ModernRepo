@@ -39,24 +39,20 @@ public class OpenApiConfig {
         // Order matters: relative path first ensures Swagger UI uses current origin with correct port
         List<Server> servers = new ArrayList<>();
         
-        // Primary server: relative path "/" - Swagger UI will inherit current host and port
-        // This resolves issues where Swagger strips port or uses wrong host
-        // Example: If accessed via http://vscode-internal-40632-beta.beta01.cloud.kavia.ai:3001/swagger-ui.html
-        // All API calls will automatically use http://vscode-internal-40632-beta.beta01.cloud.kavia.ai:3001
+        // CRITICAL: Only two server entries allowed:
+        // 1. Relative path "/" - Swagger UI inherits current host and port automatically
+        // 2. Explicit preview URL with :3001 port - Never drop the port number
+        // NO host-only entries (e.g., http://host without :3001) are permitted
+        
         Server relativeServer = new Server();
         relativeServer.setUrl("/");
-        relativeServer.setDescription("Current origin (auto-detects host:port)");
+        relativeServer.setDescription("Same origin");
         servers.add(relativeServer);
         
-        // Secondary server: explicit preview environment URL with :3001 port
-        // This ensures the port :3001 is never dropped and provides a working fallback
-        // IMPORTANT: This URL must include :3001 port explicitly to prevent Swagger from dropping it
         Server previewServer = new Server();
         previewServer.setUrl("http://vscode-internal-40632-beta.beta01.cloud.kavia.ai:3001");
-        previewServer.setDescription("Preview environment (explicit :3001)");
+        previewServer.setDescription("Preview 3001");
         servers.add(previewServer);
-        
-        // Note: No server entry without :3001 port should exist to prevent Swagger from using wrong URL
         
         openAPI.setServers(servers);
         return openAPI;
@@ -74,11 +70,11 @@ public class OpenApiConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOriginPatterns("*") // Allow all origins for development
+                    .allowedOriginPatterns("*")
                     .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
-                    .exposedHeaders("*") // Expose all response headers
-                    .allowCredentials(false) // False to avoid CORS credential conflicts with wildcard origin
+                    .exposedHeaders("*")
+                    .allowCredentials(false)
                     .maxAge(3600);
             }
         };
