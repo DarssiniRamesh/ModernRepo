@@ -1,3 +1,7 @@
+# ModernRepo
+
+> **Note**: The preview environment runs with **prod profile** (PostgreSQL) on port 3001. See [PROFILE_CONFIGURATION.md](./PROFILE_CONFIGURATION.md) for details on how to switch profiles locally.
+
 # ModernRepo - Spring Boot REST API Demo
 
 A Spring Boot REST API demo application using PostgreSQL, JPA, and Hibernate for managing questions and answers.

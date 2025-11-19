@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 # Start ModernRepo Spring Boot backend in prod mode by default (POSIX sh compliant).
+# This script ensures a SINGLE prod-profile instance on port 3001 using PostgreSQL.
 
 # Attempt to ensure script is executable (non-fatal if this fails).
 if [ ! -x "$0" ]; then
@@ -15,8 +16,12 @@ if [ -f "$PARENT_ENV_FILE" ]; then
   set +a
 fi
 
-# Ensure Spring profile is set to prod for deployment
+# Ensure Spring profile is set to prod for preview/deployment (PostgreSQL)
+# This prevents unintended dev (H2) launches that cause SIGTERM exit 143
 export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-prod}"
+
+# Use SERVER_PORT with fallback to PORT, defaulting to 3001
+export SERVER_PORT="${SERVER_PORT:-${PORT:-3001}}"
 
 # Export database connection variables explicitly
 export POSTGRES_HOST="${POSTGRES_HOST:-localhost}"
@@ -28,22 +33,22 @@ export SPRING_DATASOURCE_URL="${SPRING_DATASOURCE_URL:-jdbc:postgresql://${POSTG
 export SPRING_DATASOURCE_USERNAME="${SPRING_DATASOURCE_USERNAME:-${POSTGRES_USER}}"
 export SPRING_DATASOURCE_PASSWORD="${SPRING_DATASOURCE_PASSWORD:-${POSTGRES_PASSWORD}}"
 
-# Try Maven Wrapper, then mvn, then jar.
+# Single consistent launch path: Try Maven Wrapper, then mvn, then jar.
 if [ -x "./mvnw" ]; then
   exec ./mvnw -q -DskipTests spring-boot:run \
     -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE" \
     -Dspring-boot.run.jvmArguments="-DSPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE" \
-    -Dspring-boot.run.arguments="--server.port=${PORT:-3001}"
+    -Dspring-boot.run.arguments="--spring.profiles.active=${SPRING_PROFILES_ACTIVE} --server.port=${SERVER_PORT}"
 elif command -v mvn >/dev/null 2>&1; then
   exec mvn -q -DskipTests spring-boot:run \
     -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE" \
     -Dspring-boot.run.jvmArguments="-DSPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE" \
-    -Dspring-boot.run.arguments="--server.port=${PORT:-3001}"
+    -Dspring-boot.run.arguments="--spring.profiles.active=${SPRING_PROFILES_ACTIVE} --server.port=${SERVER_PORT}"
 elif ls target/*.jar >/dev/null 2>&1; then
   JAR=$(ls target/*.jar | head -1)
   exec java -jar "$JAR" \
     --spring.profiles.active="$SPRING_PROFILES_ACTIVE" \
-    --server.port="${PORT:-3001}"
+    --server.port="$SERVER_PORT"
 else
   echo "No mvnw, mvn, or jar found to start Spring Boot" >&2
   exit 127
