@@ -37,6 +37,31 @@ public class DbStartupConnectivityProbe {
                         HikariDataSource hikari = (HikariDataSource) dataSource;
                         jdbcUrl = hikari.getJdbcUrl();
                         username = hikari.getUsername();
+
+                        // --- Additional explicit property dump at startup for effective config ---
+                        logger.info(">>> [ModernRepo] HikariCP POOL CONFIG:");
+                        logger.info(" - Maximum pool size: {}", hikari.getMaximumPoolSize());
+                        logger.info(" - Minimum idle: {}", hikari.getMinimumIdle());
+                        logger.info(" - Connection timeout (ms): {}", hikari.getConnectionTimeout());
+                        logger.info(" - Validation timeout (ms): {}", hikari.getValidationTimeout());
+                        logger.info(" - Idle timeout (ms): {}", hikari.getIdleTimeout());
+                        logger.info(" - Max lifetime (ms): {}", hikari.getMaxLifetime());
+                        logger.info(" - Connection test query: {}", hikari.getConnectionTestQuery());
+                        logger.info(" - Initialization fail timeout: {}", hikari.getInitializationFailTimeout());
+                        logger.info(" - DataSource class name: {}", hikari.getDataSourceClassName());
+                        // Print Hikari property map, masking password if present
+                        java.util.Properties dsProps = hikari.getDataSourceProperties();
+                        if (dsProps != null && !dsProps.isEmpty()) {
+                            StringBuilder effective = new StringBuilder(" - DataSource properties (non-sensitive): ");
+                            for (String name : dsProps.stringPropertyNames()) {
+                                if (!name.toLowerCase().contains("password")) {
+                                    effective.append(name).append("=").append(dsProps.getProperty(name)).append("; ");
+                                } else {
+                                    effective.append(name).append("=******; ");
+                                }
+                            }
+                            logger.info(effective.toString());
+                        }
                     } else {
                         // Fallback: try DriverManager properties via toString (won't reveal passwords)
                         jdbcUrl = dataSource.toString();
