@@ -52,7 +52,7 @@ public class OpenApiConfig {
         
         // Always add localhost option for local development
         Server localServer = new Server();
-        localServer.setUrl("http://localhost:" + serverPort);
+        localServer.setUrl("https://vscode-internal-40632-beta.beta01.cloud.kavia.ai:3001");
         localServer.setDescription("Local development server");
         servers.add(localServer);
         
