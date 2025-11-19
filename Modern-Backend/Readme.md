@@ -14,89 +14,208 @@ Check out the complete tutorial on the CalliCoder blog -
 git clone https://github.com/callicoder/spring-boot-postgresql-jpa-hibernate-rest-api-demo.git
 ```
 
-**2. Database Configuration (postgres or H2)**
+**2. Database Configuration (PostgreSQL or H2)**
 
-This project now supports two database profiles:
+This project supports two database profiles:
 
-- **dev (default):** Uses H2 in-memory for local development. No setup needed, just start the app.
-- **prod:** Connects to a PostgreSQL server (recommended for production).
+### Development Profile (H2 In-Memory Database)
 
-__To use PostgreSQL (prod profile):__
-1. Create a database named `postgres_demo` (or change the DB name as desired).
-2. Set the following environment variables to override defaults:
-    - `SPRING_PROFILES_ACTIVE=prod`
-    - `SPRING_DATASOURCE_URL` (e.g., `jdbc:postgresql://localhost:5432/postgres_demo`)
-    - `SPRING_DATASOURCE_USERNAME` (e.g., `postgres`)
-    - `SPRING_DATASOURCE_PASSWORD` (your PostgreSQL password)
+- **Profile name:** `dev` (default)
+- **Description:** Uses H2 in-memory database for local development
+- **Setup:** No additional setup needed—just start the app
+- **H2 Console:** Available at `/h2-console` during runtime for debugging
+- **Use case:** Quick local development and testing without external database
 
-__To use H2 (dev profile, default):__
-- No extra setup—runs automatically if PostgreSQL properties are not provided.
-- The H2 console will be available at `/h2-console` during runtime for debugging.
+### Production Profile (PostgreSQL)
 
-You can also manually activate a profile on the command line:
-```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=prod
-# or for dev
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
-```
-Or, use env variables:
+- **Profile name:** `prod`
+- **Description:** Connects to a PostgreSQL database (recommended for production)
+- **Database:** Requires PostgreSQL server (local or remote)
+
+#### PostgreSQL Configuration Options
+
+**Option 1: Using Environment Variables (Recommended)**
+
+Set the following environment variables:
+
 ```bash
 export SPRING_PROFILES_ACTIVE=prod
-# (or dev)
+export POSTGRES_HOST=localhost
+export POSTGRES_PORT=5432
+export POSTGRES_DB=myapp
+export POSTGRES_USER=appuser
+export POSTGRES_PASSWORD=dbuser123
 ```
+
+Or set the complete datasource URL:
+
+```bash
+export SPRING_PROFILES_ACTIVE=prod
+export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/myapp
+export SPRING_DATASOURCE_USERNAME=appuser
+export SPRING_DATASOURCE_PASSWORD=dbuser123
+```
+
+**Option 2: Using .env File**
+
+Copy the `.env.example` file to `.env` at the project root and update values as needed:
+
+```bash
+cp ../.env.example ../.env
+# Edit .env file with your database credentials
+```
+
+**Default Values (if not overridden):**
+- `POSTGRES_HOST`: localhost
+- `POSTGRES_PORT`: 5432
+- `POSTGRES_DB`: myapp
+- `POSTGRES_USER`: appuser
+- `POSTGRES_PASSWORD`: dbuser123
 
 **3. Run the app**
 
-Type the following command from the root directory of the project to run it:
+### Running with Maven Wrapper (Recommended)
 
-```bash
-mvn spring-boot:run
-```
-Or using Maven Wrapper (recommended for container/CI environments):
+**Development mode (H2 database):**
 ```bash
 ./mvnw spring-boot:run
+# or explicitly
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Alternatively, you can package the application in the form of a JAR file and run it directly:
-
+**Production mode (PostgreSQL):**
 ```bash
-mvn clean package
-java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar
+./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
 ```
-Or with Maven Wrapper:
+
+### Running with Maven
+
+**Development mode:**
+```bash
+mvn spring-boot:run
+# or explicitly
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+**Production mode:**
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=prod
+```
+
+### Running as JAR
+
+**Build the JAR:**
 ```bash
 ./mvnw clean package
-java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar
+```
+
+**Run with dev profile (H2):**
+```bash
+java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+```
+
+**Run with prod profile (PostgreSQL):**
+```bash
+java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+```
+
+### Using the start.sh Script
+
+The `start.sh` script automatically detects the `SPRING_PROFILES_ACTIVE` environment variable:
+
+```bash
+# For dev profile (default)
+./start.sh
+
+# For prod profile
+export SPRING_PROFILES_ACTIVE=prod
+./start.sh
 ```
 
 ---
 
-### Start and Build Commands (for container/preview environments)
+## API Endpoints
 
-**Build the executable jar:**
-```bash
-./mvnw clean package
-```
+Once the application is running, you can access the following REST endpoints:
 
-**Run with dev profile:**
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
-# OR
-java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
-```
+### Questions API
+- `GET /questions` - Get all questions (with pagination)
+- `POST /questions` - Create a new question
+- `PUT /questions/{questionId}` - Update a question
+- `DELETE /questions/{questionId}` - Delete a question
 
-**Run with prod profile** (requires PostgreSQL and DB environment variables):
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
-# OR
-java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
-```
+### Answers API
+- `GET /questions/{questionId}/answers` - Get all answers for a question
+- `POST /questions/{questionId}/answers` - Add an answer to a question
+- `PUT /questions/{questionId}/answers/{answerId}` - Update an answer
+- `DELETE /questions/{questionId}/answers/{answerId}` - Delete an answer
 
-**Default Start Command for CI/Preview Containers:**
+---
+
+## Database Configuration Details
+
+### Connection Pool (Hikari)
+
+The application uses HikariCP as the connection pool (default in Spring Boot 2.x+). Configuration is set in `application-prod.properties`:
+
+- **Connection timeout:** 20 seconds
+- **Maximum pool size:** 10 connections
+- **Minimum idle:** 5 connections
+- **Idle timeout:** 5 minutes
+- **Max lifetime:** 20 minutes
+
+### Hibernate DDL Auto
+
+- **Dev profile:** `create-drop` (recreates schema on each startup)
+- **Prod profile:** `update` (updates schema incrementally, safe for production)
+
+You can override this with the `SPRING_JPA_HIBERNATE_DDL_AUTO` environment variable.
+
+---
+
+## Troubleshooting
+
+### PostgreSQL Connection Issues
+
+1. **Verify PostgreSQL is running:**
+   ```bash
+   # Check if PostgreSQL is running on the expected port
+   netstat -an | grep 5432
+   ```
+
+2. **Verify database exists:**
+   ```bash
+   psql -h localhost -U appuser -d myapp
+   ```
+
+3. **Check environment variables:**
+   ```bash
+   echo $SPRING_PROFILES_ACTIVE
+   echo $SPRING_DATASOURCE_URL
+   ```
+
+### H2 Console Not Available
+
+The H2 console is only available in `dev` profile. Make sure you're running with:
 ```bash
+export SPRING_PROFILES_ACTIVE=dev
 ./mvnw spring-boot:run
 ```
-or, if the jar is already built:
+
+Then access: `http://localhost:3001/h2-console`
+
+---
+
+## Container/CI Environment
+
+For container or preview environments, the application can be started with:
+
 ```bash
-java -jar target/postgres-demo-0.0.1-SNAPSHOT.jar
+# Default (uses SPRING_PROFILES_ACTIVE from environment or falls back to dev)
+./start.sh
+
+# Or using Maven Wrapper directly
+./mvnw spring-boot:run
 ```
+
+Make sure the appropriate environment variables are set in the container environment before starting.
