@@ -257,16 +257,25 @@ If Swagger UI displays "Failed to fetch" when trying API operations:
    curl http://localhost:3001/questions
    ```
 
-4. **Check OpenAPI server URL:** The Swagger UI should use `http://localhost:3001`. If it's using a different URL, set:
-   ```bash
-   export OPENAPI_SERVER_URL=http://localhost:3001
-   ```
+4. **Clear browser cache:** If you see "Failed to fetch" errors, try a hard refresh:
+   - **Windows/Linux:** Press `Ctrl + Shift + R`
+   - **Mac:** Press `Cmd + Shift + R`
+   - This clears cached JavaScript and CSS that may be causing issues
 
-5. **Behind a proxy?** If accessing through a reverse proxy or preview URL, ensure these properties are set in `application.properties`:
+5. **Behind a proxy or preview environment?** This application is configured to work with relative URLs:
+   - All Swagger UI requests use relative paths (`/v3/api-docs`, `/swagger-ui.html`)
+   - CORS is configured with `allowedOriginPatterns=[*]` to accept requests from preview proxies
+   - Forward headers are handled via `server.forward-headers-strategy=framework`
+   - The application automatically adapts to the proxy's base URL
+   - **No manual configuration needed** for preview environments
+
+6. **Verify these properties are set** in `application.properties`:
    ```properties
    server.forward-headers-strategy=framework
    server.tomcat.remoteip.remote-ip-header=x-forwarded-for
    server.tomcat.remoteip.protocol-header=x-forwarded-proto
+   springdoc.swagger-ui.config-url=/v3/api-docs/swagger-config
+   springdoc.swagger-ui.url=/v3/api-docs
    ```
 
 For detailed CORS troubleshooting and production configuration, see [CORS_CONFIGURATION.md](CORS_CONFIGURATION.md).
