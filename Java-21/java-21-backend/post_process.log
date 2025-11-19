@@ -1,0 +1,39 @@
+Downloading https://services.gradle.org/distributions/gradle-8.14.3-bin.zip
+.............10%.............20%.............30%.............40%.............50%.............60%.............70%.............80%.............90%..............100%
+
+Welcome to Gradle 8.14.3!
+
+Here are the highlights of this release:
+ - Java 24 support
+ - GraalVM Native Image toolchain selection
+ - Enhancements to test reporting
+ - Build Authoring improvements
+
+For more details see https://docs.gradle.org/8.14.3/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+Configuration on demand is an incubating feature.
+
+> Task :compileJava
+/home/kavia/workspace/code-generation/java-21-backend_workspace/java-21-backend/src/main/java/com/example/demo/HelloController.java:27: warning: [removal] fromHttpRequest(HttpRequest) in UriComponentsBuilder has been deprecated and marked for removal
+                .fromHttpRequest(new ServletServerHttpRequest(request))
+                ^
+1 warning
+
+> Task :processResources
+> Task :classes
+> Task :resolveMainClassName
+> Task :bootJar
+> Task :jar
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+
+[Incubating] Problems report is available at: file:///home/kavia/workspace/code-generation/java-21-backend_workspace/java-21-backend/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 1m 25s
+5 actionable tasks: 5 executed
