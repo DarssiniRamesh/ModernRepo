@@ -161,6 +161,9 @@ http://localhost:3001/v3/api-docs
 - ✅ See all validation requirements
 - 🏷️ Endpoints organized by tags (Questions, Answers)
 
+**CORS Configuration:**
+The application includes global CORS configuration to allow Swagger UI to function correctly. The default configuration allows all origins for development. For production deployments, see [CORS_CONFIGURATION.md](CORS_CONFIGURATION.md) for security best practices and how to restrict allowed origins.
+
 ### Questions API
 - `GET /questions` - Get all questions (with pagination)
 - `POST /questions` - Create a new question
@@ -237,6 +240,36 @@ export SPRING_PROFILES_ACTIVE=dev
 ```
 
 Then access: `http://localhost:3001/h2-console`
+
+### Swagger UI "Failed to fetch" Error
+
+If Swagger UI displays "Failed to fetch" when trying API operations:
+
+1. **Check CORS configuration:** The application includes global CORS settings. Verify the `CorsConfig` class exists at:
+   ```
+   src/main/java/com/example/postgresdemo/config/CorsConfig.java
+   ```
+
+2. **Browser Console:** Open browser DevTools (F12) and check the Console tab for specific CORS error messages.
+
+3. **Test with cURL:** Verify the API works outside the browser:
+   ```bash
+   curl http://localhost:3001/questions
+   ```
+
+4. **Check OpenAPI server URL:** The Swagger UI should use `http://localhost:3001`. If it's using a different URL, set:
+   ```bash
+   export OPENAPI_SERVER_URL=http://localhost:3001
+   ```
+
+5. **Behind a proxy?** If accessing through a reverse proxy or preview URL, ensure these properties are set in `application.properties`:
+   ```properties
+   server.forward-headers-strategy=framework
+   server.tomcat.remoteip.remote-ip-header=x-forwarded-for
+   server.tomcat.remoteip.protocol-header=x-forwarded-proto
+   ```
+
+For detailed CORS troubleshooting and production configuration, see [CORS_CONFIGURATION.md](CORS_CONFIGURATION.md).
 
 ---
 

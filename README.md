@@ -155,6 +155,76 @@ The Swagger UI provides:
 
 For more details, see [Modern-Backend/Readme.md](Modern-Backend/Readme.md)
 
+## CORS Configuration
+
+The application includes global CORS (Cross-Origin Resource Sharing) configuration to allow Swagger UI and other web clients to make requests from different origins.
+
+### Default CORS Settings
+
+By default, the application is configured with:
+- **Allowed Origins:** All origin patterns (`*`)
+- **Allowed Methods:** GET, POST, PUT, PATCH, DELETE, OPTIONS
+- **Allowed Headers:** Content-Type, Authorization, X-Requested-With, Accept, Origin, and Access-Control headers
+- **Credentials:** Disabled (suitable for public APIs)
+
+### Configuring Allowed Origins for Production
+
+For production environments, you should restrict allowed origins for security. You can customize CORS settings by:
+
+1. **Editing the CorsConfig class** (`Modern-Backend/src/main/java/com/example/postgresdemo/config/CorsConfig.java`)
+   
+   Replace the wildcard pattern with specific domains:
+   ```java
+   // Instead of:
+   config.addAllowedOriginPattern("*");
+   
+   // Use specific domains:
+   config.addAllowedOrigin("https://yourdomain.com");
+   config.addAllowedOrigin("https://app.yourdomain.com");
+   ```
+
+2. **For dynamic origins**, use environment variables:
+   ```java
+   @Value("${cors.allowed.origins:*}")
+   private String allowedOrigins;
+   
+   // Then in the bean:
+   Arrays.stream(allowedOrigins.split(","))
+         .forEach(config::addAllowedOrigin);
+   ```
+
+3. **Set the environment variable** in your `.env` file or deployment configuration:
+   ```bash
+   CORS_ALLOWED_ORIGINS=https://yourdomain.com,https://app.yourdomain.com
+   ```
+
+### Swagger UI and Proxy/Preview Environments
+
+The application is configured to work correctly behind proxies and in preview environments:
+- **Forward Headers Strategy:** Framework mode (respects X-Forwarded headers)
+- **Remote IP Header:** x-forwarded-for
+- **Protocol Header:** x-forwarded-proto
+- **Swagger UI:** Uses relative URLs to avoid scheme/host mismatches
+
+These settings ensure Swagger UI works correctly even when accessed through a reverse proxy or preview URL.
+
+### Testing CORS
+
+To test CORS configuration, you can use curl:
+
+```bash
+# Preflight request
+curl -H "Origin: http://example.com" \
+  -H "Access-Control-Request-Method: POST" \
+  -H "Access-Control-Request-Headers: Content-Type" \
+  -X OPTIONS http://localhost:3001/questions
+
+# Actual request
+curl -H "Origin: http://example.com" \
+  -H "Content-Type: application/json" \
+  -X GET http://localhost:3001/questions
+```
+
 ## Troubleshooting
 
 ### Can't connect to PostgreSQL
