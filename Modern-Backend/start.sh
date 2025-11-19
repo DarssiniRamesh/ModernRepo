@@ -13,12 +13,12 @@ fi
 
 # Try Maven Wrapper, then mvn, then jar.
 if [ -x "./mvnw" ]; then
-  exec ./mvnw -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE"
+  exec ./mvnw -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE" -Dspring-boot.run.arguments="--server.port=3001"
 elif command -v mvn >/dev/null 2>&1; then
-  exec mvn -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE"
+  exec mvn -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE" -Dspring-boot.run.arguments="--server.port=3001"
 elif ls target/*.jar >/dev/null 2>&1; then
   JAR=$(ls target/*.jar | head -n 1)
-  exec java -jar "$JAR" --spring.profiles.active="$SPRING_PROFILES_ACTIVE"
+  exec java -jar "$JAR" --spring.profiles.active="$SPRING_PROFILES_ACTIVE" --server.port=3001
 else
   echo "No mvnw, mvn, or jar found to start Spring Boot" >&2
   exit 127
