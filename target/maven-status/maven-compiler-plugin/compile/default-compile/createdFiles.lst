@@ -1,7 +1,7 @@
 com/example/postgresdemo/DbStartupConnectivityProbe.class
 com/example/postgresdemo/DbStartupConnectivityProbe$1.class
-com/example/postgresdemo/controller/AnswerController.class
 com/example/postgresdemo/repository/AnswerRepository.class
+com/example/postgresdemo/controller/AnswerController.class
 com/example/postgresdemo/model/Question.class
 com/example/postgresdemo/model/Answer.class
 com/example/postgresdemo/model/AuditModel.class
