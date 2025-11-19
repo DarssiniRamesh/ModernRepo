@@ -16,7 +16,12 @@ git clone https://github.com/callicoder/spring-boot-postgresql-jpa-hibernate-res
 
 **2. Configure PostgreSQL**
 
-The application connects to a local `postgres-db` container running on `localhost:3020` by default. SSL is explicitly disabled for local development with `sslmode=disable` to avoid Postgres startup issues. Production deployments should use `sslmode=verify-full` with proper CA certs. Environment variables (see `.env.example`) control all connection details:
+The application connects to a local `postgres-db` container running on `localhost:3020` by default.
+- **SSL is strictly disabled for local/dev with `?sslmode=disable` and HikariCP `ssl=false`**.
+- **DO NOT remove `sslmode=disable` from the JDBC URL for local/dev.** This ensures JDBC and HikariCP do not attempt SSL.
+- To force specific SSL settings, use env variables as shown in the provided `.env.example`.
+
+Example environment variable setup (for local/dev):
 
 ```
 SPRING_DATASOURCE_HOST=localhost
@@ -24,11 +29,11 @@ SPRING_DATASOURCE_PORT=3020
 SPRING_DATASOURCE_DB=modernrepo
 SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=postgres
-SPRING_DATASOURCE_SSLMODE=disable    # For production, use 'verify-full' and configure CA certs
-DB_URL=                              # Optionally override full JDBC URL with your own sslmode etc.
+SPRING_DATASOURCE_SSLMODE=disable           # (MANDATORY for local, do not use SSL locally)
+DB_URL=                                     # If you set this, make sure to add `?sslmode=disable`
 ```
 
-You can set these in your shell profile or as env vars. By default, the database listens on port 3020 and SSL must be off for local containers; for production enable SSL as appropriate.
+You can set these in your shell profile or as env vars. By default, the database listens on port 3020 and SSL must be off for local containers; for production enable SSL as appropriate (and configure CA certs).
 
 **3. Run the app**
 
