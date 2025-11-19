@@ -7,3 +7,4 @@ com/example/postgresdemo/repository/AnswerRepository.class
 com/example/postgresdemo/PostgresDemoApplication.class
 com/example/postgresdemo/model/Question.class
 com/example/postgresdemo/exception/ResourceNotFoundException.class
+com/example/postgresdemo/config/OpenApiConfig.class
