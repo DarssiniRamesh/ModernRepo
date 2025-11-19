@@ -3,7 +3,6 @@ package com.example.postgresdemo.config;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -15,20 +14,17 @@ import java.util.List;
 /**
  * Configuration for global CORS and OpenAPI documentation.
  * Ensures Swagger UI can properly communicate with the API across different environments.
+ * Configures server list to use relative path as primary, ensuring correct port usage.
  */
 @Configuration
 public class OpenApiConfig {
 
-    @Value("${server.port:3001}")
-    private String serverPort;
-
-    @Value("${api.base.url:}")
-    private String apiBaseUrl;
-
     // PUBLIC_INTERFACE
     /**
      * Configures OpenAPI documentation for the REST API.
-     * Dynamically sets server URLs based on environment configuration.
+     * Sets server URLs with relative path as primary (inherits current host:port)
+     * and explicit preview server URL with :3001 port as fallback.
+     * This ensures Swagger UI 'Try it out' always uses the correct port.
      * Accessible at /v3/api-docs and /swagger-ui.html
      */
     @Bean
@@ -40,20 +36,27 @@ public class OpenApiConfig {
                 .description("RESTful API for managing questions and answers using Spring Boot, PostgreSQL, JPA, and Hibernate."));
         
         // Configure servers list for Swagger UI
+        // Order matters: relative path first ensures Swagger UI uses current origin with correct port
         List<Server> servers = new ArrayList<>();
         
-        // Prefer relative path server (same origin) - this resolves CORS issues in all environments
-        // Swagger UI will inherit the current host and port (e.g., http://vscode-internal-40632-beta.beta01.cloud.kavia.ai:3001)
+        // Primary server: relative path "/" - Swagger UI will inherit current host and port
+        // This resolves issues where Swagger strips port or uses wrong host
+        // Example: If accessed via http://vscode-internal-40632-beta.beta01.cloud.kavia.ai:3001/swagger-ui.html
+        // All API calls will automatically use http://vscode-internal-40632-beta.beta01.cloud.kavia.ai:3001
         Server relativeServer = new Server();
         relativeServer.setUrl("/");
-        relativeServer.setDescription("Same origin (inherit current host:port)");
+        relativeServer.setDescription("Current origin (auto-detects host:port)");
         servers.add(relativeServer);
         
-        // Add explicit fallback server for preview environment with port 3001
+        // Secondary server: explicit preview environment URL with :3001 port
+        // This ensures the port :3001 is never dropped and provides a working fallback
+        // IMPORTANT: This URL must include :3001 port explicitly to prevent Swagger from dropping it
         Server previewServer = new Server();
         previewServer.setUrl("http://vscode-internal-40632-beta.beta01.cloud.kavia.ai:3001");
-        previewServer.setDescription("Preview environment server");
+        previewServer.setDescription("Preview environment (explicit :3001)");
         servers.add(previewServer);
+        
+        // Note: No server entry without :3001 port should exist to prevent Swagger from using wrong URL
         
         openAPI.setServers(servers);
         return openAPI;
@@ -62,8 +65,8 @@ public class OpenApiConfig {
     // PUBLIC_INTERFACE
     /**
      * Configures CORS to allow all origins, methods, and headers for development/testing.
-     * Ensures Swagger UI origin can make requests to API endpoints.
-     * In production, customize allowedOrigins to restrict access.
+     * Ensures Swagger UI origin can make requests to API endpoints without CORS errors.
+     * In production, customize allowedOriginPatterns to restrict access to specific domains.
      */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -71,11 +74,11 @@ public class OpenApiConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOriginPatterns("*") // Allow all origins
+                    .allowedOriginPatterns("*") // Allow all origins for development
                     .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
                     .exposedHeaders("*") // Expose all response headers
-                    .allowCredentials(false) // Set to false to avoid CORS credential conflicts with wildcard origin
+                    .allowCredentials(false) // False to avoid CORS credential conflicts with wildcard origin
                     .maxAge(3600);
             }
         };
