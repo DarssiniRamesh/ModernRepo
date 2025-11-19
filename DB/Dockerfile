@@ -12,5 +12,5 @@ ENV POSTGRES_PASSWORD=postgres
 # Expose the PostgreSQL service on port 3002 for container linkage
 EXPOSE 3002
 
-# Run PostgreSQL on port 3002 instead of default 5432.
+# No references to db_visualizer directory exist. Only start PostgreSQL on port 3002.
 CMD ["postgres", "-p", "3002"]

@@ -14,6 +14,7 @@ services:
       test: ["CMD", "pg_isready", "-U", "postgres", "-p", "3002"]
       interval: 10s
       retries: 5
+    # No db_visualizer remnants or volume mountings, only actual Postgres data volume used
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
