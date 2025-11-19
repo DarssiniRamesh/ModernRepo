@@ -8,4 +8,5 @@
 /home/kavia/workspace/code-generation/ModernRepo/src/main/java/com/example/postgresdemo/repository/QuestionRepository.java
 /home/kavia/workspace/code-generation/ModernRepo/src/main/java/com/example/postgresdemo/model/Answer.java
 /home/kavia/workspace/code-generation/ModernRepo/src/main/java/com/example/postgresdemo/exception/ResourceNotFoundException.java
+/home/kavia/workspace/code-generation/ModernRepo/src/main/java/com/example/postgresdemo/exception/GlobalExceptionHandler.java
 /home/kavia/workspace/code-generation/ModernRepo/src/main/java/com/example/postgresdemo/config/OpenApiConfig.java
