@@ -34,6 +34,8 @@ To use Adminer for visualizing the DB tables, visit [http://localhost:8080](http
 - Password: postgres
 - Database: postgres_demo
 
+# Note: No references to db_visualizer or cd into ModernRepo/DB/db_visualizer exist. The DB setup is designed for minimal, production-grade Postgres only.
+
 **3. Run the app**
 
 Type the following command from the root directory of the project to run it -
