@@ -1,4 +1,3 @@
-#!/bin/sh
-# Shim: If runner calls ./mvnw in ModernRepo root, redirect to start.sh
-# This ensures launchers that insist on using ./mvnw still run the actual application correctly.
+#!/usr/bin/env sh
+# POSIX shim: if runner calls ./mvnw in ModernRepo root, redirect to start.sh (no bashisms).
 exec sh ./start.sh "$@"
