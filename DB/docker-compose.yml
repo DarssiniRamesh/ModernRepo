@@ -8,13 +8,14 @@ services:
       POSTGRES_DB: postgres_demo
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      # You may override these with .env and compose env file for preview/CI
+      # PGPORT is set to 3002 in Dockerfile CMD, see Dockerfile for details.
     ports:
       - "3002:3002"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-p", "3002"]
       interval: 10s
       retries: 5
-    # No db_visualizer remnants or volume mountings, only actual Postgres data volume used
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
