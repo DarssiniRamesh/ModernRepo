@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  db:
+    build: .
+    container_name: modernrepo_postgres
+    environment:
+      POSTGRES_DB: postgres_demo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "3002:3002"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-p", "3002"]
+      interval: 10s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
