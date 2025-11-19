@@ -19,5 +19,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  adminer:
+    image: adminer
+    container_name: modernrepo_adminer
+    # Adminer connects via network to 'db'
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
