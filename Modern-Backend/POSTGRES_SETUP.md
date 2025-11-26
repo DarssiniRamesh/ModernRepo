@@ -67,6 +67,20 @@ Or from the Modern-Backend folder:
 Swagger UI: /docs
 OpenAPI JSON: /openapi.json
 
+Verification:
+- The app binds on port 3000 by default (override with PORT). Visit:
+  - http://localhost:3000/docs (Swagger UI)
+  - http://localhost:3000/openapi.json
+  - http://localhost:3000/questions
+- Logs will print at startup:
+  - Active profiles should include "prod"
+  - Datasource URL target should be either:
+    - jdbc:postgresql://postgres-db:5432/modernrepo
+    - jdbc:postgresql://localhost:5000/modernrepo
+  - Hibernate DDL auto should be "update" (unless overridden)
+
+If tables do not exist initially, Hibernate auto DDL (update) will create/update schema for entities (questions, answers). Ensure the credentials are correct if connection fails.
+
 ## 5) Common Docker commands
 
 Stop container:
