@@ -12,7 +12,7 @@ if [ -z "$SPRING_PROFILES_ACTIVE" ]; then
 fi
 
 # Try Maven Wrapper, then mvn, then jar.
-if [ -x "./mvnw" ]; then
+if [ -x "./mvnw" ] && [ -f ".mvn/wrapper/maven-wrapper.jar" ]; then
   exec ./mvnw -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE"
 elif command -v mvn >/dev/null 2>&1; then
   exec mvn -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE"

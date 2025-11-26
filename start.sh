@@ -23,13 +23,13 @@ fi
 cd "$(dirname "$0")/Modern-Backend" || exit 1
 
 # Try Maven Wrapper, then mvn, then jar.
-if [ -x ./mvnw ]; then
-  exec ./mvnw -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE" -Dspring-boot.run.arguments="--server.port=3001"
+if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+  exec ./mvnw -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE"
 elif command -v mvn >/dev/null 2>&1; then
-  exec mvn -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE" -Dspring-boot.run.arguments="--server.port=3001"
+  exec mvn -q -DskipTests spring-boot:run -Dspring-boot.run.profiles="$SPRING_PROFILES_ACTIVE"
 elif ls target/*.jar >/dev/null 2>&1; then
   JAR=$(ls target/*.jar | head -n 1)
-  exec java -jar "$JAR" --spring.profiles.active="$SPRING_PROFILES_ACTIVE" --server.port=3001
+  exec java -jar "$JAR" --spring.profiles.active="$SPRING_PROFILES_ACTIVE"
 else
   echo "No mvnw, mvn, or jar found, cannot start the Spring Boot application" >&2
   exit 127
