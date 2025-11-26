@@ -1,13 +1,13 @@
 com/example/postgresdemo/StartupConfig.class
 com/example/postgresdemo/controller/SwaggerRedirectController.class
-com/example/postgresdemo/controller/AnswerController.class
 com/example/postgresdemo/repository/AnswerRepository.class
+com/example/postgresdemo/controller/AnswerController.class
 com/example/postgresdemo/model/Question.class
 com/example/postgresdemo/controller/HealthController.class
 com/example/postgresdemo/model/Answer.class
 com/example/postgresdemo/config/WebMvcConfig.class
-com/example/postgresdemo/config/WebMvcConfig$1.class
 com/example/postgresdemo/model/AuditModel.class
+com/example/postgresdemo/config/WebMvcConfig$1.class
 com/example/postgresdemo/repository/QuestionRepository.class
 com/example/postgresdemo/controller/QuestionController.class
 com/example/postgresdemo/PostgresDemoApplication.class
