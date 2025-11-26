@@ -34,14 +34,20 @@ docker logs -f modernrepo-postgres
 - user: modernuser
 - password: modernpass
 
-Spring JDBC URL:
-jdbc:postgresql://localhost:5000/modernrepo
+Spring JDBC URL (two common options):
+- In-network container name (recommended in multi-container envs):
+  jdbc:postgresql://postgres-db:5432/modernrepo
+- Host-mapped port (if you ran Docker with -p 5000:5432):
+  jdbc:postgresql://localhost:5000/modernrepo
 
 ## 3) Configure ModernRepo to use this database
 
 Option A: export environment variables in your shell
 export SPRING_PROFILES_ACTIVE=prod
-export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5000/modernrepo
+# Choose one of the URLs below
+export SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/modernrepo
+# OR:
+# export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5000/modernrepo
 export SPRING_DATASOURCE_USERNAME=modernuser
 export SPRING_DATASOURCE_PASSWORD=modernpass
 # Optional
